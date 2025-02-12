@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Comparison Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-semibold mb-4">List Comparison Tool</h2>
+        
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="font-medium">Eligibility File (Email Only)</label>
+                <textarea id="listA" class="w-full p-2 border rounded-md" rows="6" placeholder="Enter emails, one per line"></textarea>
+            </div>
+            <div>
+                <label class="font-medium">QRM (Email Only)</label>
+                <textarea id="listB" class="w-full p-2 border rounded-md" rows="6" placeholder="Enter emails, one per line"></textarea>
+            </div>
+        </div>
+        
+        <button onclick="compareLists()" class="mt-4 w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Compare Lists</button>
+        
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold">Results</h3>
+            <div class="mt-2">
+                <h4 class="font-medium text-green-600">Common in Both Lists</h4>
+                <ul id="common" class="list-disc pl-5 text-gray-700"></ul>
+            </div>
+            <div class="mt-2">
+                <h4 class="font-medium text-red-600">Only in Eligibility File</h4>
+                <ul id="onlyA" class="list-disc pl-5 text-gray-700"></ul>
+            </div>
+            <div class="mt-2">
+                <h4 class="font-medium text-blue-600">Only in QRM</h4>
+                <ul id="onlyB" class="list-disc pl-5 text-gray-700"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function parseList(input) {
+            return input.split('\n').map(row => row.trim()).filter(email => email);
+        }
+        
+        function compareLists() {
+            const listA = new Set(parseList(document.getElementById("listA").value));
+            const listB = new Set(parseList(document.getElementById("listB").value));
+            
+            const common = [...listA].filter(email => listB.has(email));
+            const onlyA = [...listA].filter(email => !listB.has(email));
+            const onlyB = [...listB].filter(email => !listA.has(email));
+            
+            displayResults("common", common);
+            displayResults("onlyA", onlyA);
+            displayResults("onlyB", onlyB);
+        }
+        
+        function displayResults(elementId, items) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = items.length 
+                ? items.map(email => `<li>${email}</li>`).join('') 
+                : '<li class="text-gray-500">None</li>';
+        }
+    </script>
+</body>
+</html>
